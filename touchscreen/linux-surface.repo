@@ -1,0 +1,9 @@
+[linux-surface]
+name=linux-surface
+baseurl=https://pkg.surfacelinux.com/fedora/f$releasever/
+enabled=1
+skip_if_unavailable=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-linux-surface
+gpgcheck=1
+repo_gpgcheck=0
+type=rpm-md

@@ -1,0 +1,33 @@
+diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+index 4d292ee..6b379dd 100644
+--- a/drivers/media/pci/intel/ipu-bridge.c
++++ b/drivers/media/pci/intel/ipu-bridge.c
+@@ -99,6 +99,8 @@ static const struct ipu_sensor_config ipu_supported_sensors[] = {
+ 	IPU_SENSOR_CONFIG("OVTI8856", 3, 180000000, 360000000, 720000000),
+ 	/* Sony IMX471 */
+ 	IPU_SENSOR_CONFIG("SONY471A", 1, 200000000),
++	/* Sony IMX681 - Microsoft Surface Pro 10 front camera */
++	IPU_SENSOR_CONFIG("SONY0681", 1, 380800000),
+ 	/* Sony IMX471 (found on Lenovo X1 Carbon G14) */
+ 	IPU_SENSOR_CONFIG("TBE20A0", 1, 200000000),
+ 	/* Toshiba T4KA3 */
+@@ -807,6 +809,7 @@ static int ipu_bridge_connect_sensor(const struct ipu_sensor_config *cfg,
+ {
+ 	struct fwnode_handle *fwnode, *primary;
+ 	struct ipu_sensor *sensor;
++	struct device *sensor_dev;
+ 	struct acpi_device *adev = NULL;
+ 	int ret;
+ 
+@@ -852,6 +855,11 @@ static int ipu_bridge_connect_sensor(const struct ipu_sensor_config *cfg,
+ 		primary = acpi_fwnode_handle(adev);
+ 		primary->secondary = fwnode;
+ 
++		/* Surface Pro 10: sensor may have probed before the fwnode existed */
++		sensor_dev = acpi_get_first_physical_node(adev);
++		if (sensor_dev && device_reprobe(sensor_dev))
++			dev_warn(bridge->dev, "reprobe of %s failed\n", acpi_dev_name(adev));
++
+ 		ret = ipu_bridge_instantiate_ivsc(sensor);
+ 		if (ret)
+ 			goto err_free_swnodes;

@@ -1,0 +1,5 @@
+# Surface Pro 10: the tablet-mode switch reports posture 0 ("unknown") for the
+# Flex keyboard and falls back to tablet mode, which suspends the touchpad.
+[Surface Pro 10 Flex Keyboard pogo touchpad]
+MatchName=Microsoft Surface 045E:0C8D*
+ModelTabletModeNoSuspend=1

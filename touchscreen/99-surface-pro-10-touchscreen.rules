@@ -1,0 +1,4 @@
+# iptsd provides the real touchscreen/stylus; hide the raw kernel nodes from libinput
+# so the compositor doesn't get two competing streams (causes drag flicker).
+ACTION=="add|change", SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="quickspi-hid 045E:0C7F Touchscreen", ENV{LIBINPUT_IGNORE_DEVICE}="1"
+ACTION=="add|change", SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="quickspi-hid 045E:0C7F Stylus", ENV{LIBINPUT_IGNORE_DEVICE}="1"
