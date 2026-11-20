@@ -56,7 +56,7 @@ The digitizer needs `iptsd` from the linux-surface project to do proper touch/pe
 
 The install script layers it using `rpm-ostree` from the linux-surface repository (`touchscreen/linux-surface.repo`), then a udev rule in `touchscreen/` hides the kernel's original touch/pen devices from libinput to avoid flickering.
 
-There's a bug where it doesn't work after suspend and resume; there is a little service (`quickspi-sleep`) that rmmods the `intel_quickspi` module right before sleep and re-adds it after wake.
+There's a bug where it doesn't work after suspend and resume; there is a little service (`quickspi-sleep`) that removes the `intel_quickspi` module (and `intel_thc` with it, which is needed - removing only `intel_quickspi` doesn't fix it) right before sleep and re-adds it after wake.
 
 ## Touchpad in Tablet Mode
 

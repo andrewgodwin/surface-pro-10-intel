@@ -4,9 +4,11 @@
 # unload the driver before sleep and load it again on wake. udev restarts iptsd
 # when the device reappears.
 #
-# rmmod rather than modprobe -r: modprobe -r also unloads intel_thc, which has
-# been reported to panic the kernel in xhci_bus_resume on wake
-# (linux-surface issue #2158).
+# modprobe -r, which also unloads intel_thc, is needed: reloading only
+# intel_quickspi (rmmod) after a real sleep leaves the chip not answering
+# ("Wait Get Report Response timeout"). Another Surface Pro 10 owner reported
+# a kernel panic in xhci_bus_resume with intel_thc unloaded over sleep
+# (linux-surface issue #2158), but it hasn't happened here.
 [Unit]
 Description=Reload the touchscreen driver across sleep
 Before=sleep.target
@@ -15,7 +17,7 @@ StopWhenUnneeded=yes
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/sbin/rmmod intel_quickspi
+ExecStart=/usr/sbin/modprobe -r intel_quickspi
 ExecStop=/usr/sbin/modprobe intel_quickspi
 
 [Install]
