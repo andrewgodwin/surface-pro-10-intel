@@ -3,6 +3,10 @@
 # the resume reset reports success. A full driver reload does bring it back, so
 # unload the driver before sleep and load it again on wake. udev restarts iptsd
 # when the device reappears.
+#
+# rmmod rather than modprobe -r: modprobe -r also unloads intel_thc, which has
+# been reported to panic the kernel in xhci_bus_resume on wake
+# (linux-surface issue #2158).
 [Unit]
 Description=Reload the touchscreen driver across sleep
 Before=sleep.target
@@ -11,7 +15,7 @@ StopWhenUnneeded=yes
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/sbin/modprobe -r intel_quickspi
+ExecStart=/usr/sbin/rmmod intel_quickspi
 ExecStop=/usr/sbin/modprobe intel_quickspi
 
 [Install]

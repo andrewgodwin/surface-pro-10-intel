@@ -14,6 +14,11 @@ sudo cp touchscreen/quickspi-sleep.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable quickspi-sleep.service
 
+# Turn off i915 PSR2 selective fetch, reported to leave the display pipeline in
+# a state that stops s2idle resuming (linux-surface issue #2158). Takes effect
+# at the next boot.
+sudo rpm-ostree kargs --append-if-missing=i915.enable_psr2_sel_fetch=0
+
 # Keep the keyboard's touchpad working when the tablet mode switch misfires
 sudo install -D -m 0644 touchpad/local-overrides.quirks /etc/libinput/local-overrides.quirks
 
