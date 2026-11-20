@@ -9,6 +9,11 @@ sudo udevadm control --reload
 sudo udevadm trigger --action=add --subsystem-match=hidraw
 sudo udevadm trigger --action=change --subsystem-match=input
 
+# Reload the touchscreen driver across sleep, as it doesn't survive resume
+sudo cp touchscreen/quickspi-sleep.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable quickspi-sleep.service
+
 # Keep the keyboard's touchpad working when the tablet mode switch misfires
 sudo install -D -m 0644 touchpad/local-overrides.quirks /etc/libinput/local-overrides.quirks
 

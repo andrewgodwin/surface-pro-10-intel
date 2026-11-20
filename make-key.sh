@@ -1,5 +1,5 @@
 #!/bin/sh
-# Create a local Machine Owner Key (MOK) for signing the camera modules, and
+# Create a local Machine Owner Key (MOK) for signing this repo's kernel modules, and
 # queue it for enrollment. Secure Boot makes the kernel refuse unsigned modules.
 #
 # After running this, reboot and, on the blue "MOK management" screen, choose
@@ -12,7 +12,7 @@ mkdir -p mok
 chmod 700 mok
 if [ ! -f mok/MOK.priv ]; then
     openssl req -new -x509 -newkey rsa:2048 -nodes -days 36500 \
-        -subj "/CN=Surface camera module signing (local)/" \
+        -subj "/CN=Surface module signing (local)/" \
         -outform DER -keyout mok/MOK.priv -out mok/MOK.der
     chmod 600 mok/MOK.priv
 fi

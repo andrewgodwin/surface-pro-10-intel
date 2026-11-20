@@ -109,8 +109,13 @@ static const struct cci_reg_sequence imx681_init_regs[] = {
 	{ CCI_REG16(0x0112), 0x0A0A },
 	/* CSI lane mode: 2 lanes */
 	{ CCI_REG8(0x0114),  0x01 },
-	/* Image orientation: H-flip to match Windows AIQB (RGGB native → GRBG) */
-	{ CCI_REG8(0x0101),  0x03 },
+	/*
+	 * Image orientation: no flips. The sensor is mounted the right way up
+	 * on the Surface Pro 10, and the native readout is RGGB, matching the
+	 * format we report. (0x03, H+V flip, gave an upside-down picture with
+	 * red and blue swapped.)
+	 */
+	{ CCI_REG8(0x0101),  0x00 },
 	/* Vendor access unlock sequence */
 	{ CCI_REG8(0x30EB),  0x05 },
 	{ CCI_REG8(0x30EB),  0x0C },

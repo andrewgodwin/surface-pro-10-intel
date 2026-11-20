@@ -1,0 +1,13 @@
+diff --git a/drivers/platform/surface/aggregator/ssh_request_layer.c b/drivers/platform/surface/aggregator/ssh_request_layer.c
+index a356e4956..9e102f47e 100644
+--- a/drivers/platform/surface/aggregator/ssh_request_layer.c
++++ b/drivers/platform/surface/aggregator/ssh_request_layer.c
+@@ -33,7 +33,7 @@
+  * transmission, the request will be completed with %-ETIMEDOUT as status
+  * code.
+  */
+-#define SSH_RTL_REQUEST_TIMEOUT			ms_to_ktime(3000)
++#define SSH_RTL_REQUEST_TIMEOUT			ms_to_ktime(10000)
+ 
+ /*
+  * SSH_RTL_REQUEST_TIMEOUT_RESOLUTION - Request timeout granularity.

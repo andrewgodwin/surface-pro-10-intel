@@ -1,0 +1,18 @@
+# The touch controller doesn't survive the quickspi driver's own suspend and
+# resume: after a real s2idle sleep it stops answering commands, even though
+# the resume reset reports success. A full driver reload does bring it back, so
+# unload the driver before sleep and load it again on wake. udev restarts iptsd
+# when the device reappears.
+[Unit]
+Description=Reload the touchscreen driver across sleep
+Before=sleep.target
+StopWhenUnneeded=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/modprobe -r intel_quickspi
+ExecStop=/usr/sbin/modprobe intel_quickspi
+
+[Install]
+WantedBy=sleep.target

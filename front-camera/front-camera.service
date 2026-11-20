@@ -1,0 +1,17 @@
+# Swap in the patched ipu-bridge and load the imx681 sensor driver at boot.
+# Skipped if nothing is installed for the running kernel. Runs before the
+# login screen, as the stock IPU6 modules can't be swapped out once PipeWire
+# has the camera open.
+[Unit]
+Description=Load the front camera modules
+ConditionPathExists=/usr/local/lib/surface-pro-10/front-camera/%v/imx681.ko
+After=systemd-modules-load.service systemd-udev-trigger.service local-fs.target
+Before=display-manager.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh /usr/local/lib/surface-pro-10/front-camera/load.sh /usr/local/lib/surface-pro-10/front-camera
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# libcamera software ISP tuning for the Surface Pro 10's IMX681 front camera.
+# Installed to /etc/libcamera/ipa/simple/, which libcamera checks before the
+# generic uncalibrated.yaml it otherwise falls back to.
+%YAML 1.1
+---
+version: 1
+algorithms:
+  # The sensor's true black level is 64 at 10 bits (raw frames bottom out at
+  # 65-70). Set slightly above that, at 68 (4352 in the 16-bit units used
+  # here), to push the noise floor to black: higher contrast and less visible
+  # grain in shadows, for a little shadow detail. Much higher (72) gives a
+  # green cast, as the green channel's noise floor sits a few counts above red
+  # and blue. Without a fixed value at all, libcamera guesses it from the
+  # darkest pixels, noise drags the guess down, and blacks come out grey.
+  - BlackLevel:
+      blackLevel: 4352
+  - Awb:
+  # Not a measured calibration: a luma-preserving 1.2x saturation boost, as
+  # the uncorrected colour is muted. Also needed for the Saturation control.
+  - Ccm:
+      ccms:
+        - ct: 6500
+          ccm: [  1.140, -0.117, -0.023,
+                 -0.060,  1.083, -0.023,
+                 -0.060, -0.117,  1.177 ]
+  - Adjust:
+  - Agc:
+...

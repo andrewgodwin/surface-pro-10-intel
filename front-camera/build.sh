@@ -14,7 +14,7 @@ tag=v${base%.0}             # upstream tags x.y.0 as vx.y
 out=out/$kver
 build=build/$kver
 
-[ -f mok/MOK.priv ] || { echo "No signing key, run ./make-key.sh first" >&2; exit 1; }
+[ -f ../mok/MOK.priv ] || { echo "No signing key, run ../make-key.sh first" >&2; exit 1; }
 
 rm -rf "$build"
 mkdir -p "$build/imx681" "$build/ipu-bridge/drivers/media/pci/intel" "$out"
@@ -31,7 +31,7 @@ echo 'obj-m += ipu-bridge.o' > "$build/ipu-bridge/Makefile"
 
 for m in imx681 ipu-bridge; do
     make -s -C "$kdir" M="$PWD/$build/$m" modules
-    "$kdir/scripts/sign-file" sha512 mok/MOK.priv mok/MOK.der "$build/$m/$m.ko"
+    "$kdir/scripts/sign-file" sha512 ../mok/MOK.priv ../mok/MOK.der "$build/$m/$m.ko"
     cp "$build/$m/$m.ko" "$out/"
 done
 

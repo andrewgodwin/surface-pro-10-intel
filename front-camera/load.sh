@@ -2,11 +2,11 @@
 # Load the camera modules for this boot only: swaps the stock ipu-bridge for
 # the patched one and loads the imx681 sensor driver. Reboot to undo.
 #
-# Usage: sudo sh load.sh
+# Usage: sudo sh load.sh [directory holding <kernel version>/*.ko]
 set -eu
 cd "$(dirname "$0")"
 
-out=out/$(uname -r)
+out=${1:-out}/$(uname -r)
 [ -f "$out/imx681.ko" ] || { echo "Nothing built for this kernel, run ./build.sh first" >&2; exit 1; }
 
 start=$(date +%s)
@@ -15,5 +15,9 @@ insmod "$out/ipu-bridge.ko"
 modprobe v4l2-cci
 insmod "$out/imx681.ko"
 modprobe intel_ipu6_isys
-sleep 6
-dmesg --since "@$start" | grep -iE 'imx681|SONY|ipu|bridge|int3472' || true
+
+# When run by hand, wait for the sensor to probe and show what happened
+if [ -z "${1:-}" ]; then
+    sleep 6
+    dmesg --since "@$start" | grep -iE 'imx681|SONY|ipu|bridge|int3472' || true
+fi

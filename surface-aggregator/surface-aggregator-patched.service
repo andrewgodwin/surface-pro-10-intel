@@ -1,0 +1,15 @@
+# Swap in the patched surface_aggregator at boot. The stock one is loaded from
+# the initramfs, so it has to be replaced after the fact. Skipped if nothing
+# is installed for the running kernel, leaving the stock module in place.
+[Unit]
+Description=Load the patched Surface Aggregator module
+ConditionPathExists=/usr/local/lib/surface-pro-10/surface-aggregator/%v/surface_aggregator.ko
+After=systemd-modules-load.service local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh /usr/local/lib/surface-pro-10/surface-aggregator/load.sh /usr/local/lib/surface-pro-10/surface-aggregator
+
+[Install]
+WantedBy=multi-user.target
