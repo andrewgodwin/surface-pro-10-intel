@@ -8,7 +8,7 @@
 KVER := $(shell uname -r)
 
 .PHONY: help install system key check-key modules build \
-        surface-aggregator front-camera clean
+        surface-aggregator surface-gpe front-camera clean
 
 help:
 	@echo "make install    First-time setup: system tweaks and patched modules"
@@ -28,7 +28,7 @@ install: system
 	else \
 	    sh make-key.sh && \
 	    echo && \
-	    echo "Then run 'make modules' to build and install the suspend and camera fixes."; \
+	    echo "Then run 'make modules' to build and install the suspend, lid wake and camera fixes."; \
 	fi
 
 system:
@@ -49,21 +49,26 @@ check-key:
 	    exit 1; \
 	fi
 
-modules: check-key surface-aggregator front-camera
+modules: check-key surface-aggregator surface-gpe front-camera
 	@echo
 	@echo "Modules installed for $(KVER). Reboot to load them."
 
 build: check-key
 	sh surface-aggregator/build.sh
+	sh surface-gpe/build.sh
 	sh front-camera/build.sh
 
 surface-aggregator: check-key
 	sh surface-aggregator/build.sh
 	sh surface-aggregator/install.sh
 
+surface-gpe: check-key
+	sh surface-gpe/build.sh
+	sh surface-gpe/install.sh
+
 front-camera: check-key
 	sh front-camera/build.sh
 	sh front-camera/install.sh
 
 clean:
-	rm -rf surface-aggregator/out surface-aggregator/build front-camera/out front-camera/build
+	rm -rf surface-aggregator/out surface-aggregator/build surface-gpe/out surface-gpe/build front-camera/out front-camera/build

@@ -1,0 +1,14 @@
+# Load the patched surface_gpe at boot, so opening the lid wakes the system.
+# Skipped if nothing is installed for the running kernel.
+[Unit]
+Description=Load the patched Surface GPE (lid wake) module
+ConditionPathExists=/usr/local/lib/surface-pro-10/surface-gpe/%v/surface_gpe.ko
+After=systemd-modules-load.service local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh /usr/local/lib/surface-pro-10/surface-gpe/load.sh /usr/local/lib/surface-pro-10/surface-gpe
+
+[Install]
+WantedBy=multi-user.target

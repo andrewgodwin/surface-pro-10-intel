@@ -13,13 +13,13 @@ The suspend and camera fixes are patched kernel modules, which need a signing ke
 
 Reboot and enroll the key, then run `make modules` to build and install the patched modules. Reboot again to load them.
 
-**After every kernel update**, once you've rebooted into the new kernel, run `make modules` again. Until you do, suspend and the front camera won't work.
+**After every kernel update**, once you've rebooted into the new kernel, run `make modules` again. Until you do, suspend, lid wake and the front camera won't work.
 
 Run `make` on its own to list the other targets. `make system` runs only the system tweaks; it's the same as `sh install-fedora-atomic.sh`. The Bluetooth key import for the Flex keyboard is separate (see below).
 
 ## Module Signing
 
-The suspend and camera fixes build patched kernel modules, and Secure Boot makes the kernel refuse unsigned ones ("Key was rejected by service"). `make key` (or `./make-key.sh`) makes a local Machine Owner Key in `mok/` and queues it for enrollment. Reboot, and on the blue "MOK management" screen choose Enroll MOK -> Continue -> Yes, enter the password you set, then Reboot. You only need to do this once.
+The suspend, lid wake and camera fixes build patched kernel modules, and Secure Boot makes the kernel refuse unsigned ones ("Key was rejected by service"). `make key` (or `./make-key.sh`) makes a local Machine Owner Key in `mok/` and queues it for enrollment. Reboot, and on the blue "MOK management" screen choose Enroll MOK -> Continue -> Yes, enter the password you set, then Reboot. You only need to do this once.
 
 Keep `mok/MOK.priv` safe: anything signed with it will load on this machine. It's in `.gitignore`. To remove the key later, run `sudo mokutil --delete mok/MOK.der` and reboot.
 
@@ -61,6 +61,16 @@ The tablet mode switch reports posture `0` for the Flex Keyboard, which the `sur
 **Working, but needs rebuilding after each kernel update**
 
 Suspend fails on the stock kernel: the Surface Aggregator takes 3-4 seconds to answer the "leaving D0" notification, and the driver gives up after 3. The aborted suspends also break the touchscreen and pen until a reboot. The `surface-aggregator` directory builds a patched module with a longer timeout, and installs a service that loads it at boot. See `surface-aggregator/README.md`.
+
+In Plasma, set "When power button pressed" (System Settings, Power Management) to something other than Sleep. Otherwise the press that wakes the machine also reaches Plasma as a sleep request, and it goes straight back to sleep. That quick back-to-back sleep can also interrupt the touchscreen driver reload and leave touch dead. If that happens, `sudo modprobe -r intel_quickspi && sudo modprobe intel_quickspi` brings it back.
+
+### Waking from Suspend
+
+**Working, but needs rebuilding after each kernel update**
+
+Opening the lid didn't wake the machine, only the power button did. The kernel's `surface_gpe` module sets up lid wake on Surfaces, but it doesn't know the Surface Pro 10, whose lid uses ACPI GPE `0x2E`. The `surface-gpe` directory builds a patched module that does, and installs a service that loads it at boot. See `surface-gpe/README.md`.
+
+Pressing a key on the keyboard still doesn't wake it.
 
 ## Front Camera
 
